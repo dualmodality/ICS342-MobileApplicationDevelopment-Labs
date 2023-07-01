@@ -75,12 +75,6 @@ class MainActivity : ComponentActivity() {
                 ) {entry ->
                     DetailScreenView(dataItem = dataItems[entry.arguments!!.getInt("id") - 1])
                 }
-                /* LabsTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-
-                }
-            } */
             }
         }
     }
