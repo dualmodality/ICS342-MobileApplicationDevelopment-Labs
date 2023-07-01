@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,6 +25,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ics342.labs.data.DataItem
 import com.ics342.labs.ui.theme.LabsTheme
 
@@ -54,11 +61,26 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LabsTheme {
+            val navController = rememberNavController()
+            NavHost(navController = navController, startDestination = "DataItemList") {
+                composable(route = "DataItemList") {
+                    DataItemList(dataItems = dataItems, navController = navController)
+                }
+
+                composable(route = "DetailsScreen/{id}",
+                    arguments = listOf(navArgument("id") {
+                        type = NavType.IntType
+                        defaultValue = 0
+                    })
+                ) {entry ->
+                    DetailScreenView(dataItem = dataItems[entry.arguments!!.getInt("id") - 1])
+                }
+                /* LabsTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    DataItemList(dataItems = dataItems)
+
                 }
+            } */
             }
         }
     }
@@ -66,9 +88,15 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun DataItemView(dataItem: DataItem) {
-    var showDialog by remember { mutableStateOf(false) }
-    Row(modifier = Modifier.fillMaxSize().clickable { showDialog = true }) {
+fun DataItemView(dataItem: DataItem, navController: NavController) {
+    Row(modifier = Modifier
+        .fillMaxSize()
+        .clickable(onClick = {
+            navController.navigate(route = buildString {
+                append("DetailsScreen/")
+                append(dataItem.id)
+            })
+        })) {
         Text(text = dataItem.id.toString(),
                 style = MaterialTheme.typography.headlineLarge)
         Spacer(modifier = Modifier.size(16.dp))
@@ -81,29 +109,35 @@ fun DataItemView(dataItem: DataItem) {
             
         }
     }
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text(text = dataItem.name) },
-            text = { Text(text = dataItem.description) },
-            confirmButton = { TextButton(onClick = { showDialog = false }) {
-                                Text(text = "Okay")} }
-        )
-    }
-    
 }
 
 @Composable
-fun DataItemList(dataItems: List<DataItem>) {
+fun DetailScreenView(dataItem: DataItem) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text(text = dataItem.id.toString(),
+                style = MaterialTheme.typography.headlineLarge)
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(text = dataItem.name,
+                style = MaterialTheme.typography.headlineLarge)
+        }
+        Spacer(modifier = Modifier.size(16.dp))
+        Text(text = dataItem.description,
+            style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
+@Composable
+fun DataItemList(dataItems: List<DataItem>, navController: NavController) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(items = dataItems) { DataItemView(dataItem = it) }
+        items(items = dataItems) { DataItemView(dataItem = it, navController = navController) }
     }
 
 }
 
 @Preview(showBackground = true)
 @Composable
-fun ItemListPreview() {
-    DataItemList(dataItems = dataItems)
+fun DetailScreenPreview() {
+    DetailScreenView(dataItem = dataItems[0])
 
 }
