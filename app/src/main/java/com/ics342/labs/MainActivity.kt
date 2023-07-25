@@ -1,6 +1,7 @@
 package com.ics342.labs
 
 import android.Manifest
+import android.app.Notification
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -62,7 +63,8 @@ class MainActivity : ComponentActivity() {
 }
 
 fun startNotificationService(context: Context) {
-    TODO("Start the Notification Service")
+    val intent = Intent(context, NotificationService::class.java)
+    context.startService(intent)
 }
 
 private fun checkOrRequestPermission(

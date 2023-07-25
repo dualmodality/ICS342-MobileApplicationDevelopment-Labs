@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Labs</string>
+    <string name="notification_title">Hey, YOU!</string>
+    <string name="notification_body">You\'re amazing! Keep being awesome.</string>
+    <string name="notification_channel_name">Lab 8 Notification Channel</string>
+    <string name="notification_channel_desc">The notification channel for lab 8 notifications</string>
 </resources>
