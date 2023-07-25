@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -23,10 +24,14 @@ class NotificationService: Service() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.d("onCreate", "after super constructor called")
         createNotificationChannel()
+        Log.d("onCreate", "return from createNotificationChannel()")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        Log.d("onStartCommand", "in onStartCommand")
         // If permission has not been granted, stop the service and return from
         // onStartCommand
         if (ContextCompat.checkSelfPermission(
@@ -40,14 +45,16 @@ class NotificationService: Service() {
 
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             this,
-            1,
-            intent,
+            0,
+            Intent(this, MainActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
 
+        Log.d("onStartCommand", "Pending Intent")
+
        // Build notification
 
-        //TODO("Build and show notification")
+        //"Build and show notification"
         var builder = NotificationCompat.Builder(this, "LAB_8_CHANNEL_ID")
             .setSmallIcon(R.drawable.star)
             .setContentTitle(getString(R.string.notification_title))
@@ -56,9 +63,13 @@ class NotificationService: Service() {
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
 
-        with(notificationManager) {
+        Log.d("onStartCommand", "builder")
+
+        with(NotificationManagerCompat.from(this)) {
             notify(NOTIFICATION_ID, builder.build())
         }
+
+        Log.d("onStartCommand", "Leaving onStartCommand")
 
         return START_STICKY_COMPATIBILITY
     }
@@ -69,7 +80,7 @@ class NotificationService: Service() {
     }
 
     private fun createNotificationChannel() {
-        //TODO("Create notification channel and register with the system")
+        //"Create notification channel and register with the system"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = getString(R.string.notification_channel_name)
             val descriptionText = getString(R.string.notification_channel_desc)
