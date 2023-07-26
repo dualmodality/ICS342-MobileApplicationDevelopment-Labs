@@ -4,4 +4,5 @@
     <string name="notification_body">You\'re amazing! Keep being awesome.</string>
     <string name="notification_channel_name">Lab 8 Notification Channel</string>
     <string name="notification_channel_desc">The notification channel for lab 8 notifications</string>
+    <string name="CHANNEL_ID">LAB_8_CHANNEL_ID</string>
 </resources>
